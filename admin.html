@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>iTapNFC — Admin Panel</title>
+<meta name="description" content="iTapNFC admin panel — manage users, products, templates and subscriptions.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="canonical" href="https://itapnfc.tech/admin.html">
+
+<link rel="icon" type="image/png" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="iTapNFC">
+<meta property="og:title" content="iTapNFC — Admin Panel">
+<meta property="og:description" content="iTapNFC admin panel — manage users, products, templates and subscriptions.">
+<meta property="og:url" content="https://itapnfc.tech/admin.html">
+<meta property="og:image" content="https://itapnfc.tech/assets/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="iTapNFC — Admin Panel">
+<meta name="twitter:description" content="iTapNFC admin panel — manage users, products, templates and subscriptions.">
+<meta name="twitter:image" content="https://itapnfc.tech/assets/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --pulse:#6D5CFF; --pulse-2:#8B7CFF; --glow:#3FD6C9; --amber:#F2B84B; --red:#F2697A;
+  --gradient: linear-gradient(135deg,var(--pulse),var(--glow));
+  --gradient-soft: linear-gradient(135deg, rgba(109,92,255,.16), rgba(63,214,201,.16));
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+html[data-theme="dark"]{
+  --bg:#0A0C10; --bg-elevated:#12141C; --bg-elevated-2:#181B25; --sidebar-bg:#0D0F16;
+  --text:#F3F3F6; --text-muted:#9097AA; --text-faint:#5A6072;
+  --border:rgba(255,255,255,.08); --border-strong:rgba(255,255,255,.14);
+  --glass:rgba(18,20,28,.55); --glass-strong:rgba(24,27,37,.85);
+  --shadow-sm:0 12px 30px -10px rgba(0,0,0,.4);
+}
+html[data-theme="light"]{
+  --bg:#F2F1ED; --bg-elevated:#FFFFFF; --bg-elevated-2:#FBFAF8; --sidebar-bg:#FFFFFF;
+  --text:#15161B; --text-muted:#5C6070; --text-faint:#9A9DAA;
+  --border:rgba(20,21,26,.08); --border-strong:rgba(20,21,26,.13);
+  --glass:rgba(255,255,255,.65); --glass-strong:rgba(255,255,255,.92);
+  --shadow-sm:0 12px 30px -10px rgba(20,21,30,.10);
+}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;transition:background .3s,color .3s;}
+h1,h2,h3{font-family:'Space Grotesk',sans-serif;font-weight:600;letter-spacing:-.02em;}
+.mono{font-family:'JetBrains Mono',monospace;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;}
+@media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important;}}
+
+.app{display:grid;grid-template-columns:240px 1fr;min-height:100vh;}
+.sidebar{background:var(--sidebar-bg);border-right:1px solid var(--border);padding:22px 16px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh;}
+.logo{display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;padding:0 8px;margin-bottom:6px;}
+.logo-mark{width:30px;height:30px;border-radius:9px;background:var(--gradient);display:flex;align-items:center;justify-content:center;flex:none;}
+.logo-mark svg{width:16px;height:16px;}
+.admin-tag{font-size:11px;color:var(--text-faint);padding:0 8px;margin-bottom:24px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.05em;}
+.nav-group{display:flex;flex-direction:column;gap:2px;flex:1;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:12px;font-size:14px;color:var(--text-muted);cursor:pointer;transition:background .2s,color .2s;}
+.nav-item svg{width:17px;height:17px;flex:none;}
+.nav-item:hover{background:var(--glass);color:var(--text);}
+.nav-item.active{background:var(--gradient-soft);color:var(--pulse);font-weight:600;}
+.nav-divider{height:1px;background:var(--border);margin:14px 4px;}
+.sidebar-foot{padding:14px 12px;border-top:1px solid var(--border);margin-top:8px;display:flex;align-items:center;gap:10px;}
+.sidebar-foot .av{width:34px;height:34px;border-radius:50%;background:var(--gradient);display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:700;flex:none;}
+.sidebar-foot .nm{font-size:13px;font-weight:600;}
+.sidebar-foot .pl{font-size:11px;color:var(--text-faint);}
+
+.main{min-width:0;}
+.topbar{height:72px;display:flex;align-items:center;justify-content:space-between;padding:0 28px;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:20;}
+.tb-title{font-size:15px;font-weight:600;}
+.theme-toggle{width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:var(--glass);display:flex;align-items:center;justify-content:center;cursor:pointer;}
+.theme-toggle svg{width:16px;height:16px;color:var(--text);}
+
+.content{padding:28px;}
+.section{display:none;}
+.section.active{display:block;animation:secIn .35s var(--ease);}
+@keyframes secIn{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px;flex-wrap:wrap;gap:12px;}
+.page-head h1{font-size:23px;}
+.page-head p{color:var(--text-muted);font-size:13.5px;margin-top:4px;}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:12px;font-size:13.5px;font-weight:600;cursor:pointer;border:none;}
+.btn-primary{background:var(--gradient);color:#fff;box-shadow:0 10px 24px -8px rgba(109,92,255,.5);}
+.btn-ghost{background:var(--glass);color:var(--text);border:1px solid var(--border-strong);}
+
+.grid{display:grid;gap:18px;}
+.cols-4{grid-template-columns:repeat(4,1fr);}
+.cols-3{grid-template-columns:repeat(3,1fr);}
+.card{background:var(--glass);border:1px solid var(--border);border-radius:18px;padding:22px;backdrop-filter:blur(10px);}
+.stat-card .lbl{font-size:12px;color:var(--text-faint);font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.03em;}
+.stat-card .num{font-size:26px;font-family:'Space Grotesk',sans-serif;font-weight:700;margin-top:8px;}
+.stat-card .trend{font-size:12px;color:var(--glow);margin-top:6px;}
+.trend.down{color:var(--red);}
+
+.toolbar{display:flex;gap:12px;margin-bottom:18px;flex-wrap:wrap;align-items:center;}
+.search-box{display:flex;align-items:center;gap:8px;background:var(--glass);border:1px solid var(--border);border-radius:11px;padding:9px 14px;flex:1;min-width:200px;max-width:320px;}
+.search-box svg{width:15px;height:15px;color:var(--text-faint);flex:none;}
+.search-box input{background:none;border:none;outline:none;color:var(--text);font-size:13px;width:100%;}
+.select-box{background:var(--glass);border:1px solid var(--border-strong);border-radius:11px;padding:9px 14px;font-size:13px;color:var(--text);}
+
+table{width:100%;border-collapse:collapse;}
+th{font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--text-faint);text-align:left;padding:10px 14px;border-bottom:1px solid var(--border);font-family:'JetBrains Mono',monospace;font-weight:500;}
+td{padding:13px 14px;font-size:13.5px;border-bottom:1px solid var(--border);}
+tr:last-child td{border-bottom:none;}
+tbody tr:hover{background:var(--glass);}
+.cell-name{font-weight:600;}
+.cell-sub{font-size:11.5px;color:var(--text-faint);}
+
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.02em;}
+.pill.active{background:rgba(63,214,201,.15);color:var(--glow);}
+.pill.suspended{background:rgba(242,105,122,.15);color:var(--red);}
+.pill.draft{background:rgba(242,184,75,.15);color:var(--amber);}
+.pill.live{background:rgba(63,214,201,.15);color:var(--glow);}
+.pill.past_due{background:rgba(242,184,75,.15);color:var(--amber);}
+.pill.trialing{background:rgba(109,92,255,.15);color:var(--pulse);}
+.pill.type{background:var(--bg-elevated-2);color:var(--text-muted);}
+
+.icon-action{width:30px;height:30px;border-radius:9px;border:1px solid var(--border-strong);background:var(--bg-elevated);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;margin-left:6px;}
+.icon-action svg{width:14px;height:14px;color:var(--text-muted);}
+.icon-action:hover svg{color:var(--pulse);}
+.icon-action.danger:hover svg{color:var(--red);}
+
+.tpl-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.tpl-card{background:var(--glass);border:1px solid var(--border);border-radius:16px;overflow:hidden;}
+.tpl-head{height:74px;display:flex;align-items:center;justify-content:center;}
+.tpl-head svg{width:24px;height:24px;color:#fff;}
+.tpl-body{padding:14px 16px;}
+.tpl-body h3{font-size:13.5px;margin-bottom:4px;}
+.tpl-body .usage{font-size:11.5px;color:var(--text-faint);font-family:'JetBrains Mono',monospace;}
+.tpl-actions{display:flex;justify-content:flex-end;gap:6px;margin-top:12px;}
+
+.chart-card .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.chart-card .card-head h3{font-size:14.5px;}
+.chart-card .card-head .sub{font-size:11.5px;color:var(--text-faint);}
+
+.export-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+.export-opt{display:flex;align-items:center;gap:12px;padding:14px 16px;border:1.5px solid var(--border-strong);border-radius:14px;cursor:pointer;margin-bottom:10px;transition:border-color .2s;}
+.export-opt.selected{border-color:var(--pulse);background:var(--gradient-soft);}
+.export-opt svg{width:18px;height:18px;color:var(--pulse);flex:none;}
+.export-opt .t{font-size:13.5px;font-weight:600;}
+.export-opt .s{font-size:11.5px;color:var(--text-faint);}
+.daterange{display:flex;gap:10px;margin:18px 0;}
+.daterange input{flex:1;background:var(--bg-elevated-2);border:1px solid var(--border-strong);border-radius:11px;padding:10px 12px;font-size:13px;color:var(--text);}
+
+.toast{position:fixed;bottom:26px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--bg-elevated);border:1px solid var(--border-strong);border-radius:13px;padding:12px 20px;font-size:13.5px;box-shadow:var(--shadow-sm);opacity:0;transition:all .3s var(--ease);z-index:100;display:flex;align-items:center;gap:8px;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+.toast svg{width:15px;height:15px;color:var(--glow);}
+
+@media (max-width:1100px){.cols-4{grid-template-columns:repeat(2,1fr);}.tpl-grid{grid-template-columns:repeat(2,1fr);}.export-grid{grid-template-columns:1fr;}}
+@media (max-width:860px){.app{grid-template-columns:1fr;}.sidebar{position:fixed;left:-260px;top:0;width:240px;z-index:60;transition:left .3s var(--ease);}.sidebar.open{left:0;}.menu-btn{display:flex !important;}}
+.menu-btn{display:none;}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:50;}
+.overlay.show{display:block;}
+table{overflow-x:auto;display:block;}
+thead, tbody{display:table;width:100%;table-layout:fixed;}
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+<div class="app">
+  <aside class="sidebar" id="sidebar">
+    <div class="logo"><div class="logo-mark"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><path d="M6 12a6 6 0 0 1 6-6"/><path d="M3 12a9 9 0 0 1 9-9"/><circle cx="12" cy="12" r="1.6" fill="#fff" stroke="none"/></svg></div>iTapNFC</div>
+    <div class="admin-tag">Admin Panel</div>
+    <div class="nav-group">
+      <div class="nav-item active" data-sec="overview" onclick="showSection('overview',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>Overview</div>
+      <div class="nav-item" data-sec="users" onclick="showSection('users',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0M17 9a3 3 0 1 0 0-6M16 14.2a6 6 0 0 1 5 5.8"/></svg>Manage Users</div>
+      <div class="nav-item" data-sec="products" onclick="showSection('products',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg>Manage Products</div>
+      <div class="nav-item" data-sec="templates" onclick="showSection('templates',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>Manage Templates</div>
+      <div class="nav-item" data-sec="subs" onclick="showSection('subs',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>Manage Subscriptions</div>
+      <div class="nav-item" data-sec="analytics" onclick="showSection('analytics',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20V10M10 20V4M17 20v-7"/></svg>View Analytics</div>
+      <div class="nav-item" data-sec="export" onclick="showSection('export',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>Export Reports</div>
+      <div class="nav-divider"></div>
+      <div class="nav-item" onclick="window.location.href='index.html';"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5M21 12H9"/></svg>Logout</div>
+    </div>
+    <div class="sidebar-foot">
+      <div class="av">AD</div>
+      <div><div class="nm">Admin</div><div class="pl">Super Admin</div></div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <div class="theme-toggle menu-btn" onclick="toggleSidebar()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M3 12h18M3 18h18"/></svg></div>
+        <div class="tb-title" id="tbTitle">Overview</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:14px;">
+        <a href="index.html" style="font-size:13.5px;color:var(--text-muted);">View Site →</a>
+        <div class="theme-toggle" id="themeToggle">
+          <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+          <svg class="icon-moon" style="display:none" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- OVERVIEW -->
+      <div class="section active" id="sec-overview">
+        <div class="page-head"><div><h1>Platform Overview</h1><p>A snapshot of everything happening across iTapNFC.</p></div></div>
+        <div class="grid cols-4" style="margin-bottom:18px;">
+          <div class="card stat-card"><div class="lbl">Total Users</div><div class="num">1,284</div><div class="trend">+64 this month</div></div>
+          <div class="card stat-card"><div class="lbl">Total Products</div><div class="num">3,902</div><div class="trend">+211 this month</div></div>
+          <div class="card stat-card"><div class="lbl">Total Taps</div><div class="num">412,860</div><div class="trend">+9.4%</div></div>
+          <div class="card stat-card"><div class="lbl">MRR</div><div class="num">$18,420</div><div class="trend">+6.1%</div></div>
+        </div>
+        <div class="grid cols-3">
+          <div class="card" style="grid-column:span 2;">
+            <div class="card-head"><h3>Platform Growth</h3><span class="sub">New signups, last 6 months</span></div>
+            <svg viewBox="0 0 600 200" style="width:100%;height:auto;">
+              <defs><linearGradient id="ovArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6D5CFF" stop-opacity="0.3"/><stop offset="100%" stop-color="#6D5CFF" stop-opacity="0"/></linearGradient></defs>
+              <path d="M30,150 L130,130 L230,138 L330,95 L430,70 L530,40 L530,180 L30,180 Z" fill="url(#ovArea)"/>
+              <path d="M30,150 L130,130 L230,138 L330,95 L430,70 L530,40" fill="none" stroke="#6D5CFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+              <g fill="var(--text-faint)" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">
+                <text x="30" y="196">Jan</text><text x="130" y="196">Feb</text><text x="230" y="196">Mar</text><text x="330" y="196">Apr</text><text x="430" y="196">May</text><text x="530" y="196">Jun</text>
+              </g>
+            </svg>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Recent Signups</h3></div>
+            <div id="recentSignups"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- USERS -->
+      <div class="section" id="sec-users">
+        <div class="page-head"><div><h1>Manage Users</h1><p>All registered businesses on iTapNFC.</p></div><button class="btn btn-primary">+ Add User</button></div>
+        <div class="toolbar">
+          <div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg><input type="text" placeholder="Search users..." oninput="filterTable('usersTable', this.value)"></div>
+          <select class="select-box" onchange="filterUsersByPlan(this.value)">
+            <option value="">All Plans</option><option>Starter</option><option>Business</option><option>Enterprise</option>
+          </select>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <table id="usersTable"><thead><tr><th>Name</th><th>Business</th><th>Plan</th><th>Status</th><th>Joined</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+
+      <!-- PRODUCTS -->
+      <div class="section" id="sec-products">
+        <div class="page-head"><div><h1>Manage Products</h1><p>Every NFC product created across the platform.</p></div></div>
+        <div class="toolbar">
+          <div class="search-box"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg><input type="text" placeholder="Search products..." oninput="filterTable('productsTable', this.value)"></div>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <table id="productsTable"><thead><tr><th>Product</th><th>Owner</th><th>Taps</th><th>Status</th><th>Created</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+
+      <!-- TEMPLATES -->
+      <div class="section" id="sec-templates">
+        <div class="page-head"><div><h1>Manage Templates</h1><p>Default templates available in the Product Builder.</p></div><button class="btn btn-primary">+ Create Template</button></div>
+        <div class="tpl-grid" id="tplGrid"></div>
+      </div>
+
+      <!-- SUBSCRIPTIONS -->
+      <div class="section" id="sec-subs">
+        <div class="page-head"><div><h1>Manage Subscriptions</h1><p>Billing status across all accounts.</p></div></div>
+        <div class="grid cols-3" style="margin-bottom:18px;">
+          <div class="card stat-card"><div class="lbl">Total MRR</div><div class="num">$18,420</div><div class="trend">+6.1%</div></div>
+          <div class="card stat-card"><div class="lbl">Active Subscriptions</div><div class="num">1,196</div><div class="trend">+38 this month</div></div>
+          <div class="card stat-card"><div class="lbl">Churn Rate</div><div class="num">2.1%</div><div class="trend down">+0.3%</div></div>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <table id="subsTable"><thead><tr><th>Business</th><th>Plan</th><th>MRR</th><th>Status</th><th>Renewal</th><th></th></tr></thead><tbody></tbody></table>
+        </div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div class="section" id="sec-analytics">
+        <div class="page-head"><div><h1>Platform Analytics</h1><p>Aggregate usage across all businesses.</p></div></div>
+        <div class="grid cols-3">
+          <div class="card" style="grid-column:span 2;">
+            <div class="card-head"><h3>Total Taps</h3><span class="sub">Last 6 months</span></div>
+            <svg viewBox="0 0 600 200" style="width:100%;height:auto;">
+              <defs><linearGradient id="anBar" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#3FD6C9"/><stop offset="100%" stop-color="#6D5CFF"/></linearGradient></defs>
+              <g fill="url(#anBar)">
+                <rect x="40" y="120" width="50" height="60" rx="8"/><rect x="140" y="100" width="50" height="80" rx="8"/><rect x="240" y="108" width="50" height="72" rx="8"/><rect x="340" y="70" width="50" height="110" rx="8"/><rect x="440" y="50" width="50" height="130" rx="8"/><rect x="540" y="20" width="50" height="160" rx="8"/>
+              </g>
+              <g fill="var(--text-faint)" font-size="11" font-family="JetBrains Mono, monospace" text-anchor="middle">
+                <text x="65" y="196">Jan</text><text x="165" y="196">Feb</text><text x="265" y="196">Mar</text><text x="365" y="196">Apr</text><text x="465" y="196">May</text><text x="565" y="196">Jun</text>
+              </g>
+            </svg>
+          </div>
+          <div class="card">
+            <div class="card-head"><h3>Plan Distribution</h3></div>
+            <svg viewBox="0 0 200 200" style="width:150px;height:150px;display:block;margin:0 auto;">
+              <g transform="rotate(-90 100 100)">
+                <circle cx="100" cy="100" r="70" fill="none" stroke="var(--bg-elevated-2)" stroke-width="24"/>
+                <circle cx="100" cy="100" r="70" fill="none" stroke="#6D5CFF" stroke-width="24" stroke-dasharray="241.9 439.8" stroke-dashoffset="0"/>
+                <circle cx="100" cy="100" r="70" fill="none" stroke="#3FD6C9" stroke-width="24" stroke-dasharray="153.9 439.8" stroke-dashoffset="-241.9"/>
+                <circle cx="100" cy="100" r="70" fill="none" stroke="#F2B84B" stroke-width="24" stroke-dasharray="44 439.8" stroke-dashoffset="-395.8"/>
+              </g>
+            </svg>
+            <div style="margin-top:14px;display:flex;flex-direction:column;gap:8px;font-size:12.5px;">
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">● Starter</span><span class="mono">55%</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">● Business</span><span class="mono">35%</span></div>
+              <div style="display:flex;justify-content:space-between;"><span style="color:var(--text-muted);">● Enterprise</span><span class="mono">10%</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXPORT -->
+      <div class="section" id="sec-export">
+        <div class="page-head"><div><h1>Export Reports</h1><p>Download platform data as a CSV file.</p></div></div>
+        <div class="export-grid">
+          <div>
+            <div class="export-opt selected" data-report="users" onclick="selectReport('users',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/></svg><div><div class="t">Users Report</div><div class="s">All registered accounts and plans</div></div></div>
+            <div class="export-opt" data-report="products" onclick="selectReport('products',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8l-9-5-9 5 9 5 9-5z"/><path d="M3 8v8l9 5 9-5V8"/></svg><div><div class="t">Products Report</div><div class="s">Every NFC product and its tap count</div></div></div>
+            <div class="export-opt" data-report="subs" onclick="selectReport('subs',this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg><div><div class="t">Revenue Report</div><div class="s">Subscriptions, MRR and renewal dates</div></div></div>
+          </div>
+          <div class="card">
+            <h3 style="font-size:14px;margin-bottom:14px;">Date Range</h3>
+            <div class="daterange"><input type="date" value="2026-01-01"><input type="date" value="2026-06-26"></div>
+            <h3 style="font-size:14px;margin-bottom:10px;">Format</h3>
+            <div style="font-size:13px;color:var(--text-muted);margin-bottom:20px;">CSV — opens in Excel, Sheets, or Numbers</div>
+            <button class="btn btn-primary" style="width:100%;" onclick="exportReport()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" width="15" height="15"><path d="M12 3v12m0 0l-4-4m4 4l4-4"/><path d="M4 17v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg>
+              Export Report
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <footer style="text-align:center;padding:24px;font-size:12px;color:var(--text-faint);">
+      © 2026 iTapNFC · <a href="tel:+2349064145186" style="color:var(--text-faint);">09064145186</a> · <a href="mailto:itapnfctech@gmail.com" style="color:var(--text-faint);">itapnfctech@gmail.com</a>
+    </footer>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const root = document.documentElement;
+document.getElementById('themeToggle').addEventListener('click', function(){
+  const isDark = root.getAttribute('data-theme') === 'dark';
+  root.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  this.querySelector('.icon-sun').style.display = isDark ? 'block' : 'none';
+  this.querySelector('.icon-moon').style.display = isDark ? 'none' : 'block';
+});
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+  root.setAttribute('data-theme','light');
+  document.querySelector('#themeToggle .icon-sun').style.display='block';
+  document.querySelector('#themeToggle .icon-moon').style.display='none';
+}
+function toggleSidebar(){ document.getElementById('sidebar').classList.toggle('open'); document.getElementById('overlay').classList.toggle('show'); }
+
+const TITLES = {overview:'Overview', users:'Manage Users', products:'Manage Products', templates:'Manage Templates', subs:'Manage Subscriptions', analytics:'View Analytics', export:'Export Reports'};
+function showSection(id, el){
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  if(el) el.classList.add('active');
+  document.getElementById('tbTitle').textContent = TITLES[id];
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+const ICONS = {
+  payment:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="13" rx="2"/><path d="M2 10h20M6 15h4"/></svg>',
+  menu:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v14l-3-2-3 2-3-2-3 2-2-1.4-2 1.4z"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>',
+  donation:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.8 12.6L12 21l-8.8-8.4a5 5 0 0 1 7.5-6.6L12 7l1.3-1a5 5 0 0 1 7.5 6.6z"/></svg>',
+  review:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3 6 6.5.9-4.7 4.6 1.1 6.4-5.9-3.1-5.9 3.1 1.1-6.4L2 8.9 8.5 8z"/></svg>',
+  card:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="9" cy="11" r="2"/><path d="M15 9h3M15 13h3M6 17h12"/></svg>',
+  attendance:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>',
+  visitor:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/><path d="M3 21v-1a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5v1M16 11l2 2 4-4"/></svg>',
+  asset:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.6 13.4 12 22l-9.6-9.6a3.5 3.5 0 0 1 0-5L8 2l3 3-5 5 6.6 6.6 5-5z"/><circle cx="17.5" cy="6.5" r="1"/></svg>'
+};
+const EDIT_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>';
+const BAN_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M5.5 5.5l13 13"/></svg>';
+const EYE_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7-11-7-11-7z"/><circle cx="12" cy="12" r="3"/></svg>';
+const TRASH_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2m3 0-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>';
+const COPY_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+const REFRESH_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2v6h-6M3 22v-6h6"/><path d="M3.5 9A9 9 0 0 1 21 8M20.5 15A9 9 0 0 1 3 16"/></svg>';
+const X_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
+
+const USERS = [
+ {name:'Grace Adebayo', business:'Grace Bistro', plan:'Business', status:'active', joined:'Jan 14, 2026'},
+ {name:'Tunde Okafor', business:'Lagos Salon', plan:'Starter', status:'active', joined:'Feb 2, 2026'},
+ {name:'Cathedral of Hope', business:'Cathedral of Hope', plan:'Enterprise', status:'active', joined:'Nov 8, 2025'},
+ {name:'Ifeoma Chukwu', business:'Suite 4 Spa', plan:'Starter', status:'suspended', joined:'Mar 20, 2026'},
+ {name:'Hotel Aurora Ops', business:'Hotel Aurora', plan:'Business', status:'active', joined:'Dec 1, 2025'},
+ {name:'David Okon', business:'Okon Retail', plan:'Starter', status:'active', joined:'Apr 11, 2026'},
+ {name:'Bright Future HR', business:'Bright Future Corp', plan:'Enterprise', status:'active', joined:'Oct 19, 2025'},
+ {name:'Amaka Eze', business:'Amaka E. — Realtor', plan:'Starter', status:'active', joined:'May 30, 2026'}
+];
+const PRODUCTS = [
+ {name:'Payment Page — Grace Bistro', type:'payment', owner:'Grace Adebayo', taps:3210, status:'live', created:'Jan 16, 2026'},
+ {name:'Smart Menu — Grace Bistro', type:'menu', owner:'Grace Adebayo', taps:2480, status:'live', created:'Jan 18, 2026'},
+ {name:'Review Card — Suite 4', type:'review', owner:'Ifeoma Chukwu', taps:1340, status:'live', created:'Mar 22, 2026'},
+ {name:'Donation Page — Cathedral', type:'donation', owner:'Cathedral of Hope', taps:980, status:'live', created:'Nov 10, 2025'},
+ {name:'Business Card — Amaka E.', type:'card', owner:'Amaka Eze', taps:410, status:'draft', created:'May 31, 2026'},
+ {name:'Front Desk Check-in', type:'visitor', owner:'Hotel Aurora', taps:2210, status:'live', created:'Dec 4, 2025'},
+ {name:'HQ Attendance', type:'attendance', owner:'Bright Future Corp', taps:5120, status:'live', created:'Oct 22, 2025'},
+ {name:'Projector A2 Tag', type:'asset', owner:'Bright Future Corp', taps:88, status:'live', created:'Nov 1, 2025'}
+];
+const SUBS = [
+ {business:'Grace Bistro', plan:'Business', mrr:29, status:'active', renewal:'Aug 14, 2026'},
+ {business:'Lagos Salon', plan:'Starter', mrr:9, status:'active', renewal:'Jul 2, 2026'},
+ {business:'Cathedral of Hope', plan:'Enterprise', mrr:149, status:'active', renewal:'Sep 8, 2026'},
+ {business:'Suite 4 Spa', plan:'Starter', mrr:9, status:'past_due', renewal:'Jun 20, 2026'},
+ {business:'Hotel Aurora', plan:'Business', mrr:29, status:'active', renewal:'Jul 1, 2026'},
+ {business:'Okon Retail', plan:'Starter', mrr:9, status:'active', renewal:'Jul 11, 2026'},
+ {business:'Bright Future Corp', plan:'Enterprise', mrr:149, status:'active', renewal:'Oct 19, 2026'},
+ {business:'Amaka E. — Realtor', plan:'Starter', mrr:9, status:'trialing', renewal:'Jun 30, 2026'}
+];
+const TEMPLATES = [
+ {id:'payment', name:'Payment Page', usage:412}, {id:'menu', name:'Restaurant Menu', usage:298},
+ {id:'donation', name:'Church Donation', usage:151}, {id:'review', name:'Google Review Card', usage:520},
+ {id:'card', name:'Business Card', usage:684}, {id:'attendance', name:'Attendance', usage:97},
+ {id:'visitor', name:'Visitor Registration', usage:144}, {id:'asset', name:'Asset Tracking', usage:62}
+];
+const COLOR_MAP = {payment:'#6D5CFF', menu:'#3FD6C9', donation:'#F2697A', review:'#F2B84B', card:'#8B7CFF', attendance:'#4F9DF2', visitor:'#3FD6C9', asset:'#9097AA'};
+
+function renderUsers(list){
+  document.querySelector('#usersTable tbody').innerHTML = list.map(u => `
+    <tr><td><div class="cell-name">${u.name}</div></td>
+    <td>${u.business}</td><td>${u.plan}</td>
+    <td><span class="pill ${u.status}">${u.status}</span></td>
+    <td class="cell-sub">${u.joined}</td>
+    <td style="text-align:right;"><span class="icon-action" title="Edit">${EDIT_ICON}</span><span class="icon-action danger" title="Suspend">${BAN_ICON}</span></td></tr>
+  `).join('');
+}
+function renderProducts(list){
+  document.querySelector('#productsTable tbody').innerHTML = list.map(p => `
+    <tr><td><div class="cell-name">${p.name}</div><span class="pill type">${p.type}</span></td>
+    <td>${p.owner}</td><td class="mono">${p.taps.toLocaleString()}</td>
+    <td><span class="pill ${p.status}">${p.status}</span></td>
+    <td class="cell-sub">${p.created}</td>
+    <td style="text-align:right;"><span class="icon-action" title="View">${EYE_ICON}</span><span class="icon-action danger" title="Disable">${BAN_ICON}</span></td></tr>
+  `).join('');
+}
+function renderSubs(){
+  document.querySelector('#subsTable tbody').innerHTML = SUBS.map(s => `
+    <tr><td><div class="cell-name">${s.business}</div></td><td>${s.plan}</td>
+    <td class="mono">$${s.mrr}/mo</td><td><span class="pill ${s.status}">${s.status.replace('_',' ')}</span></td>
+    <td class="cell-sub">${s.renewal}</td>
+    <td style="text-align:right;"><span class="icon-action" title="Change Plan">${REFRESH_ICON}</span><span class="icon-action danger" title="Cancel">${X_ICON}</span></td></tr>
+  `).join('');
+}
+function renderTemplates(){
+  document.getElementById('tplGrid').innerHTML = TEMPLATES.map(t => `
+    <div class="tpl-card">
+      <div class="tpl-head" style="background:linear-gradient(135deg, ${COLOR_MAP[t.id]}, #3FD6C9);">${ICONS[t.id].replace('currentColor','#fff')}</div>
+      <div class="tpl-body">
+        <h3>${t.name}</h3>
+        <div class="usage">${t.usage} active products</div>
+        <div class="tpl-actions">
+          <span class="icon-action" title="Edit">${EDIT_ICON}</span>
+          <span class="icon-action" title="Duplicate">${COPY_ICON}</span>
+          <span class="icon-action danger" title="Delete">${TRASH_ICON}</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+function renderRecentSignups(){
+  const recent = USERS.slice(-4).reverse();
+  document.getElementById('recentSignups').innerHTML = recent.map(u => `
+    <div style="display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border);">
+      <div style="width:32px;height:32px;border-radius:50%;background:var(--gradient);display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700;flex:none;">${u.name.split(' ').map(w=>w[0]).slice(0,2).join('')}</div>
+      <div style="min-width:0;flex:1;"><div style="font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${u.name}</div><div style="font-size:11px;color:var(--text-faint);">${u.plan} plan</div></div>
+    </div>`).join('');
+}
+
+renderUsers(USERS); renderProducts(PRODUCTS); renderSubs(); renderTemplates(); renderRecentSignups();
+
+function filterTable(tableId, query){
+  const list = tableId === 'usersTable' ? USERS : PRODUCTS;
+  const filtered = list.filter(item => JSON.stringify(item).toLowerCase().includes(query.toLowerCase()));
+  if(tableId === 'usersTable') renderUsers(filtered); else renderProducts(filtered);
+}
+function filterUsersByPlan(plan){
+  renderUsers(plan ? USERS.filter(u => u.plan === plan) : USERS);
+}
+
+let selectedReport = 'users';
+function selectReport(id, el){
+  selectedReport = id;
+  document.querySelectorAll('.export-opt').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+function toCSV(rows){
+  if(!rows.length) return '';
+  const headers = Object.keys(rows[0]);
+  const lines = [headers.join(',')];
+  rows.forEach(r => lines.push(headers.map(h => `"${String(r[h]).replace(/"/g,'""')}"`).join(',')));
+  return lines.join('\\n');
+}
+function exportReport(){
+  let data, filename;
+  if(selectedReport === 'users'){ data = USERS; filename = 'itapnfc-users-report.csv'; }
+  else if(selectedReport === 'products'){ data = PRODUCTS; filename = 'itapnfc-products-report.csv'; }
+  else { data = SUBS; filename = 'itapnfc-revenue-report.csv'; }
+  const csv = toCSV(data);
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast(filename + ' downloaded');
+}
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 12l5 5L20 6"/></svg>' + msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+</script>
+</body>
+</html>
