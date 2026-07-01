@@ -15,8 +15,11 @@ const callApi = async (url, body, method = "GET") => {
         },
         credentials: "include",
     });
+    
     if (!response.ok) {
-      console.log("Failed to call API");
+        const error = await response.json();
+        console.warn(error, "error");
+        alert(error.message || "Failed to call API")
       throw new Error("Failed to call API");
     }
 
