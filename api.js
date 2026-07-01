@@ -29,7 +29,7 @@ const callApi = async (url, body, method = "GET") => {
 };
 
 export const login = async (payload) => {
-    const data = await callApi(`${API_URL}/login`, payload, "POST");
+    const data = await callApi(`${API_URL}/api/auth/login`, payload, "POST");
     console.log(data);
     token = data.token;
     if (!token) return;
