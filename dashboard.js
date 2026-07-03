@@ -102,7 +102,23 @@ function saveProfile(){
 
 // ---------- Settings ----------
 function saveNotifications(){ showToast('Notification preferences saved'); }
-function changePassword(){ showToast('Password updated'); }
+async function changePassword(){
+  const currentPassword = document.getElementById("currentPassword").value.trim();
+  const newPassword = document.getElementById("newPassword").value.trim();
+  const confirmNewPassword = document.getElementById("confirmNewPassword").value.trim();
+
+  if(!currentPassword) showToast("Current password is required!");
+  if(!newPassword) showToast("New password is required!");
+  if(!confirmNewPassword) showToast("Confirmed new password is required!");
+
+  const payload = {
+    newPassword,
+    currentPassword
+  }
+  const {message} = await changePassword(payload);
+  if(message) return showToast(message ?? "Something went wrong");
+  // showToast('Password updated'); 
+}
 function deleteAccount(){
   if (confirm('This will permanently delete your account, products and analytics. Are you sure?')) {
     showToast('Account scheduled for deletion');

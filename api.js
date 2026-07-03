@@ -65,6 +65,22 @@ export const register = async (payload) => {
   return response.data;
 };
 
+
+export const changePassword = async (payload) => {
+  const response = await callApi(`${API_URL}/api/auth/change-password`, payload, "POST");
+  let status;
+
+   if (response.networkError) {
+    return { message: "Network Error" };
+  }
+
+  if (!response.ok) {
+    return response.data;
+  }
+  console.log(response.data);
+  return response.data;
+};
+
 export const adminUsers = async () => {
   const response = await callApi(`${API_URL}/api/admin/users`, undefined, "GET");
   let status;
