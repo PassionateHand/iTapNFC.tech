@@ -1,4 +1,35 @@
 
+const getUser = () => JSON.parse(localStorage.getItem("user")) ?? null;
+const user = getUser();
+
+console.log(getUser(), "user details");
+
+
+const firstName = document.getElementsByClassName("first-name");
+const fullName = document.getElementsByClassName("full-name");
+console.log(fullName)
+console.log(firstName)
+Array.from(fullName).forEach(el => {
+
+  el.innerHTML = user?.name ?? "User"
+})
+Array.from(firstName).forEach(el => {
+  el.innerHTML = user?.name?.split(" ")?.[0] ?? "User";
+})
+
+document.getElementById('logoutBtn').addEventListener('click', () => {
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('user');
+  window.location.href = 'auth.html';
+});
+
+document.getElementById('logoutLink').addEventListener('click', (e) => {
+  e.preventDefault();
+  localStorage.removeItem('access_token');
+  localStorage.removeItem('user');
+  window.location.href = 'auth.html';
+});
+
 const root = document.documentElement;
 document.getElementById('themeToggle').addEventListener('click', function(){
   const isDark = root.getAttribute('data-theme') === 'dark';
@@ -15,12 +46,17 @@ function toggleSidebar(){
   document.getElementById('sidebar').classList.toggle('open');
   document.getElementById('overlay').classList.toggle('show');
 }
-function toggleDrop(id){
+
+
+
+function toggleDrop(id, e) {
+  if (e) e.stopPropagation();
   const el = document.getElementById(id);
   const wasOpen = el.classList.contains('open');
   document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
   if (!wasOpen) el.classList.add('open');
 }
+
 document.addEventListener('click', function(e){
   if (!e.target.closest('.icon-btn') && !e.target.closest('.profile-btn') && !e.target.closest('.dropdown')) {
     document.querySelectorAll('.dropdown').forEach(d => d.classList.remove('open'));
@@ -122,3 +158,17 @@ function downloadInvoice(id, date, amount){
   showToast(id + ' downloaded');
 }
 renderInvoices();
+
+window.toggleDrop = toggleDrop;
+window.showDashSection = showDashSection;
+window.comingSoon = comingSoon;
+window.toggleSidebar = toggleSidebar;
+window.saveProfile = saveProfile;
+window.saveNotifications = saveNotifications;
+window.changePassword = changePassword;
+window.deleteAccount = deleteAccount;
+window.togglePlanPicker = togglePlanPicker;
+window.switchPlan = switchPlan;
+window.cancelSubscription = cancelSubscription;
+window.downloadInvoice = downloadInvoice;
+window.pickThemeSwatch = pickThemeSwatch;

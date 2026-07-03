@@ -19,13 +19,24 @@ if (initialHash === "register" || initialHash === "forgot") {
 }
 const loginBtn = document.getElementById("loginBtn");
 
-loginBtn.addEventListener("click", async () => {
+loginBtn.addEventListener("click", async function (e) {
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPass").value.trim();
-  if (!email || !password) return alert("Email or password is incomplete!!");
+  if (!email || !password) return showToast("Email or password is incomplete!!");
+  this.innerHTML = "Logging in..."
   const payload = { email, password };
-    await login(payload);
+  const { message } = await login(payload);
+  if(message) showToast(message);
+  this.innerHTML = "Log in";
 })
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M4 12l5 5L20 6"/></svg>' + msg;
+  t.classList.add('show');
+  clearTimeout(window.__toastTimer);
+  window.__toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
 
 function showView(name) {
   console.log(name)
