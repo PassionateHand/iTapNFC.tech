@@ -1,3 +1,4 @@
+import { changePasswordInApp } from "./api";
 
 const getUser = () => JSON.parse(localStorage.getItem("user")) ?? null;
 const user = getUser();
@@ -115,7 +116,7 @@ async function changePassword(){
     newPassword,
     currentPassword
   }
-  const {message} = await changePassword(payload);
+  const {message} = await changePasswordInApp(payload);
   if(message) return showToast(message ?? "Something went wrong");
   // showToast('Password updated'); 
 }

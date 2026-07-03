@@ -66,7 +66,7 @@ export const register = async (payload) => {
 };
 
 
-export const changePassword = async (payload) => {
+export const changePasswordInApp = async (payload) => {
   const response = await callApi(`${API_URL}/api/auth/change-password`, payload, "POST");
   let status;
 
