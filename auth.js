@@ -116,3 +116,12 @@ addRow();
 addRow();
 addRow();
 setInterval(addRow, 3400);
+
+
+window.toggleEye = toggleEye;
+window.addRow = addRow;
+window.showForgotSuccess = showForgotSuccess;
+window.countUp = countUp;
+window.showForgotForm = showForgotForm;
+window.showView = showView;
+window.showToast = showToast;
