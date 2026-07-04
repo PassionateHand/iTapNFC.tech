@@ -1,4 +1,4 @@
-import { changePasswordInApp } from "./api";
+import { changePasswordInApp } from "./api.js";
 
 const getUser = () => JSON.parse(localStorage.getItem("user")) ?? null;
 const user = getUser();
@@ -112,12 +112,17 @@ async function changePassword(){
   if(!newPassword) showToast("New password is required!");
   if(!confirmNewPassword) showToast("Confirmed new password is required!");
 
+  const submitBtn = document.getElementById("updatePassword");
+  submitBtn.textContent = "Updating..."
+
   const payload = {
     newPassword,
     currentPassword
   }
   const {message} = await changePasswordInApp(payload);
-  if(message) return showToast(message ?? "Something went wrong");
+  if(message) showToast(message ?? "Something went wrong");
+    submitBtn.textContent = "Update Password";
+
   // showToast('Password updated'); 
 }
 function deleteAccount(){
