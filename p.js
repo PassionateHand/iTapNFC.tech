@@ -2,16 +2,13 @@ import {
   initials,
   showToast,
   buildProductBody,
+  gradStyle,
   exposeGlobals,
 } from "./product-renderer.js";
 
 exposeGlobals();
 
 const API_URL = "https://itapnfc-tech-backend.onrender.com";
-
-function gradStyle(theme) {
-  return `background: linear-gradient(135deg, ${theme}, #3FD6C9);`;
-}
 
 function avatarHtml(product) {
   if (product.logoUrl) {
