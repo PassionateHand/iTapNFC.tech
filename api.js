@@ -95,3 +95,17 @@ export const adminUsers = async () => {
   console.log(response.data);
   return response.data;
 };
+
+export const createProduct = async (payload) => {
+  const response = await callApi(`${API_URL}/api/products`, payload, "POST");
+
+  if (response.networkError) {
+    return { message: "Network Error" };
+  }
+
+  if (!response.ok) {
+    return response.data;
+  }
+
+  return response.data;
+};
