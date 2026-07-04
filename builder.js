@@ -395,7 +395,7 @@ async function buildOutput() {
     return;
   }
 
-  const url = `https://i-tap-nfc-tech.vercel.app/p/${result.product.slug}`;
+  const url = `https://www.itapnfc.tech/p/${result.product.slug}`;
   document.getElementById("genUrl").textContent = url;
   generateQR(url);
   renderPreview("phoneScreenFinal");
