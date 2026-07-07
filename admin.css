@@ -82,7 +82,7 @@ th{font-size:10.5px;text-transform:uppercase;letter-spacing:.04em;color:var(--te
 td{padding:13px 14px;font-size:13.5px;border-bottom:1px solid var(--border);}
 tr:last-child td{border-bottom:none;}
 tbody tr:hover{background:var(--glass);}
-.cell-name{font-weight:600;}
+.cell-name{font-weight:600; text-transform: capitalize;}
 .cell-sub{font-size:11.5px;color:var(--text-faint);}
 
 .pill{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;padding:4px 10px;border-radius:999px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;letter-spacing:.02em;}

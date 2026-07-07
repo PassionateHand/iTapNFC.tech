@@ -96,6 +96,21 @@ export const adminUsers = async () => {
   return response.data;
 };
 
+export const getAdminProducts = async () => {
+  const response = await callApi(`${API_URL}/api/admin/products`, undefined, "GET");
+  let status;
+
+   if (response.networkError) {
+    return { message: "Network Error" };
+  }
+
+  if (!response.ok) {
+    return response.data;
+  }
+  console.log(response.data);
+  return response.data;
+};
+
 export const createProduct = async (payload) => {
   const response = await callApi(`${API_URL}/api/products`, payload, "POST");
 

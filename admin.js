@@ -1,4 +1,4 @@
-import { register } from "./api.js";
+import { adminUsers, getAdminProducts, register } from "./api.js";
 
 const root = document.documentElement;
 document.getElementById("themeToggle").addEventListener("click", function () {
@@ -74,53 +74,25 @@ const REFRESH_ICON =
 const X_ICON =
   '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M18 6 6 18M6 6l12 12"/></svg>';
 
-const USERS = [
-  {
-    id: "u1",
-    name: "Grace Adebayo",
-    email: "grace@gracebistro.com",
-    business: "Grace Bistro",
-    role: "USER",
-    status: "active",
-    joined: "Jan 14, 2026",
-  },
-  {
-    id: "u2",
-    name: "Tunde Okafor",
-    email: "tunde@lagossalon.com",
-    business: "Lagos Salon",
-    role: "USER",
-    status: "active",
-    joined: "Feb 2, 2026",
-  },
-  {
-    id: "u3",
-    name: "Cathedral of Hope",
-    email: "admin@cathedralofhope.org",
-    business: "Cathedral of Hope",
-    role: "USER",
-    status: "active",
-    joined: "Nov 8, 2025",
-  },
-];
-const PRODUCTS = [
-  {
-    name: "Payment Page — Grace Bistro",
-    type: "payment",
-    owner: "Grace Adebayo",
-    taps: 3210,
-    status: "live",
-    created: "Jan 16, 2026",
-  },
-  {
-    name: "Smart Menu — Grace Bistro",
-    type: "menu",
-    owner: "Grace Adebayo",
-    taps: 2480,
-    status: "live",
-    created: "Jan 18, 2026",
-  },
-];
+let usersLoading = true;
+
+const getAllUsers = async () => {
+ 
+  const users =  await adminUsers();
+  return users.users;
+}
+const getAllProducts = async () => {
+ 
+  const users =  await getAdminProducts();
+  return users.products;
+}
+
+console.log(await getAllProducts(), 'lolo');
+
+let PRODUCTS = await getAllProducts();
+
+let USERS = await getAllUsers();
+
 const SUBS = [
   {
     business: "Grace Bistro",
@@ -172,14 +144,32 @@ const COLOR_MAP = {
   asset: "#9097AA",
 };
 
+const formatDate = (date) => {
+  if(!date.trim()) return;
+  return new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(date));
+};
+
+const totalUsers = document.querySelector(".num");
+const totalProducts = document.querySelector(".prod-num");
+const totalProductsTrend = document.querySelector(".prod-trend");
+const trend = document.querySelector(".trend");
+totalUsers.textContent = USERS.length || 0;
+trend.textContent = `+${USERS.length || 0} this month`;
+totalProducts.textContent = PRODUCTS.length || 0;
+totalProductsTrend.textContent = `+${PRODUCTS.length || 0} this month`;
+
 function renderUsers(list) {
   document.querySelector("#usersTable tbody").innerHTML = list
     .map(
       (u) => `
     <tr><td><div class="cell-name">${u.name}</div>${u.email ? `<div class="cell-sub">${u.email}</div>` : ""}</td>
-    <td>${u.business}</td>
+    <td>${u.businessName}</td>
     <td><span class="pill ${u.status}">${u.status}</span></td>
-    <td class="cell-sub">${u.joined}</td>
+    <td class="cell-sub">${formatDate(u.createdAt)}</td>
     <td style="text-align:right;">
       <span class="icon-action" title="Edit" onclick="openEditUserModal('${u.id}')">${EDIT_ICON}</span>
       <span class="icon-action danger" title="${u.status === "suspended" ? "Reactivate" : "Suspend"}" onclick="toggleUserStatus('${u.id}')">${u.status === "suspended" ? EYE_ICON : BAN_ICON}</span>
@@ -188,14 +178,26 @@ function renderUsers(list) {
     )
     .join("");
 }
+
+const capitalizeWords = (text) => {
+  return text
+    .trim()
+    .split(/\s+/)
+    .map(
+      (word) =>
+        word.charAt(0).toUpperCase() + word.slice(1).toLowerCase(),
+    )
+    .join(" ");
+};
+
 function renderProducts(list) {
   document.querySelector("#productsTable tbody").innerHTML = list
     .map(
       (p) => `
-    <tr><td><div class="cell-name">${p.name}</div><span class="pill type">${p.type}</span></td>
-    <td>${p.owner}</td><td class="mono">${p.taps.toLocaleString()}</td>
-    <td><span class="pill ${p.status}">${p.status}</span></td>
-    <td class="cell-sub">${p.created}</td>
+    <tr><td><div class="cell-name">${capitalizeWords(p?.name)}</div><span class="pill type">${p?.type}</span></td>
+    <td>${p?.user?.name}</td><td class="mono">${p?.user?.businessName}</td>
+    <td><span class="pill ${p?.status}">${p?.status}</span></td>
+    <td class="cell-sub">${formatDate(p?.createdAt)}</td>
     <td style="text-align:right;"><span class="icon-action" title="View">${EYE_ICON}</span><span class="icon-action danger" title="Disable">${BAN_ICON}</span></td></tr>
   `,
     )
@@ -204,7 +206,7 @@ function renderProducts(list) {
 function renderSubs() {
   document.querySelector("#subsTable tbody").innerHTML = SUBS.map(
     (s) => `
-    <tr><td><div class="cell-name">${s.business}</div></td><td>${s.role}</td>
+    <tr><td><div class="cell-name">${s.businessName}</div></td><td>${s.role}</td>
     <td class="mono">$${s.mrr}/mo</td><td><span class="pill ${s.status}">${s.status.replace("_", " ")}</span></td>
     <td class="cell-sub">${s.renewal}</td>
     <td style="text-align:right;"><span class="icon-action" title="Change Role">${REFRESH_ICON}</span><span class="icon-action danger" title="Cancel">${X_ICON}</span></td></tr>
@@ -245,6 +247,8 @@ function renderRecentSignups() {
     )
     .join("");
 }
+
+
 
 renderUsers(USERS);
 renderProducts(PRODUCTS);
@@ -353,13 +357,6 @@ async function submitAddUser() {
     errorBox.style.display = "block";
     return;
   }
-  // if (
-  //   USERS.some((u) => u.email && u.email.toLowerCase() === email.toLowerCase())
-  // ) {
-  //   errorBox.textContent = "A user with this email already exists.";
-  //   errorBox.style.display = "block";
-  //   return;
-  // }
 
   errorBox.textContent = "";
   submitBtnText.innerHTML = "Processing...";
@@ -370,9 +367,9 @@ async function submitAddUser() {
     id: "u" + __userIdCounter,
     name,
     email,
-    business,
+    businessName: business,
     status: "active",
-    joined: new Date().toLocaleDateString("en-US", {
+    createdAt: new Date().toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
       year: "numeric",
@@ -398,6 +395,7 @@ async function submitAddUser() {
 
   submitBtnText.innerHTML = "Add User";
 
+  USERS = await getAllUsers();
   renderUsers(USERS);
   renderRecentSignups();
   closeAddUserModal();
@@ -429,7 +427,7 @@ function openEditUserModal(id) {
   document.getElementById("editUserId").value = user.id;
   document.getElementById("editUserName").value = user.name;
   document.getElementById("editUserEmail").value = user.email || "";
-  document.getElementById("editUserBusiness").value = user.business;
+  document.getElementById("editUserBusiness").value = user.businessName;
   document.getElementById("editUserRole").value = user.role;
   document.getElementById("editUserStatus").value = user.status;
   document.getElementById("editUserError").style.display = "none";
@@ -472,7 +470,7 @@ function submitEditUser() {
   if (user) {
     user.name = name;
     user.email = email;
-    user.business = business;
+    user.businessName = business;
     user.role = role;
     user.status = status;
   }
