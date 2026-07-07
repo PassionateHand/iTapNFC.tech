@@ -231,7 +231,7 @@ function renderTemplates() {
   ).join("");
 }
 function renderRecentSignups() {
-  const recent = USERS.slice(-4).reverse();
+  const recent = USERS.slice(-5).reverse();
   document.getElementById("recentSignups").innerHTML = recent
     .map(
       (u) => `
