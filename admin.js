@@ -79,15 +79,14 @@ let usersLoading = true;
 const getAllUsers = async () => {
  
   const users =  await adminUsers();
-  return users.users;
+  return users?.users || [];
 }
 const getAllProducts = async () => {
  
   const users =  await getAdminProducts();
-  return users.products;
+  return users?.products || [];
 }
 
-console.log(await getAllProducts(), 'lolo');
 
 let PRODUCTS = await getAllProducts();
 
@@ -157,10 +156,10 @@ const totalUsers = document.querySelector(".num");
 const totalProducts = document.querySelector(".prod-num");
 const totalProductsTrend = document.querySelector(".prod-trend");
 const trend = document.querySelector(".trend");
-totalUsers.textContent = USERS.length || 0;
-trend.textContent = `+${USERS.length || 0} this month`;
-totalProducts.textContent = PRODUCTS.length || 0;
-totalProductsTrend.textContent = `+${PRODUCTS.length || 0} this month`;
+totalUsers.textContent = USERS?.length || 0;
+trend.textContent = `+${USERS?.length || 0} this month`;
+totalProducts.textContent = PRODUCTS?.length || 0;
+totalProductsTrend.textContent = `+${PRODUCTS?.length || 0} this month`;
 
 function renderUsers(list) {
   document.querySelector("#usersTable tbody").innerHTML = list
