@@ -119,10 +119,9 @@ async function changePassword(){
     newPassword,
     currentPassword
   }
-  const {message} = await changePasswordInApp(payload);
-  if(message) showToast(message ?? "Something went wrong");
-    submitBtn.textContent = "Update Password";
 
+  const {message} = await changePassword(payload);
+  if(message) return showToast(message ?? "Something went wrong");
   // showToast('Password updated'); 
 }
 function deleteAccount(){
